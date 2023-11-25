@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'corsheaders',
     'user',
     'review',
     'search'
@@ -45,19 +47,21 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'Trol.urls'
-
+import os
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,6 +87,13 @@ DATABASES = {
     }
 }
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.ScryptPasswordHasher',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -118,9 +129,43 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfile')
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+AUTH_USER_MODEL = 'Profile.User'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
+from datetime import timedelta
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ]
+}
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': timedelta(days=3),
+    'JWT_ALLOW_REFRESH': True
+}
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',  
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+SITE_ID = 1  
+

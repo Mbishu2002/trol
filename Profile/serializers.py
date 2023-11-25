@@ -29,3 +29,15 @@ class BusinessCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = BusinessCategory
         fields = '__all__'
+class SetPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'password',
+            'token',
+            'uidb64'
+        ]
+class FollowersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Followers
+        fields = '__all__'
