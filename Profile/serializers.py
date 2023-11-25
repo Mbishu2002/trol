@@ -13,7 +13,7 @@ class SocialSerializer(serializers.ModelSerializer):
 
 class BusinessSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(many=True, queryset=BusinessCategory.objects.all())
-
+    profile_image = serializers.ImageField(source='get_profile_image_url', read_only=True)
     class Meta:
         model = Business
         fields = '__all__'
@@ -47,3 +47,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['name', 'profile_image', 'about']
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['user_id', 'name', 'email', 'profile_picture', 'is_business', 'about']

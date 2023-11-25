@@ -173,6 +173,13 @@ def logout(request):
     return Response(status= status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+@login_required
+def get_user(request):
+    user = request.user
+    serializer = UserDetailSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 @login_required
 def follow_user(request):
