@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Social, Business, BusinessCategory, SubCategory
+from .models import User, Social, Business, BusinessCategory, SubCategory, Followers
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,3 +41,9 @@ class FollowersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Followers
         fields = '__all__'
+class UserUpdateSerializer(serializers.ModelSerializer):
+    profile_image = serializers.ImageField(required=False)  
+
+    class Meta:
+        model = User
+        fields = ['name', 'profile_image', 'about']

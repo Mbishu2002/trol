@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
 from django.contrib.auth.tokens import default_token_generator
 from django.template import loader
 from rest_framework.exceptions import AuthenticationFailed
@@ -95,8 +95,21 @@ def verify_user(request, uidb64, token):
         return Response({"message": "User verified successfully"}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Invalid or expired verification token"}, status=status.HTTP_400_BAD_REQUEST)
-def update_account(request, user_id):
-    pass
+
+@api_view(['PATCH'])
+@parser_classes([MultiPartParser])
+def update_user(request, user_id):
+    try:
+        user = User.objects.get(user_id=user_id)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = UserUpdateSerializer(instance=user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 def send_password_reset_email(request):
     serializer = UserSerializer(data=request.data)
@@ -130,7 +143,7 @@ def send_password_reset_email(request):
 def set_new_password(request):
     serializer = SetPasswordSerializer(data=request.data)
     if serializer.is_valid():
-        password = request.data.get('Password')
+        password = request.data.get('password')
         token = request.data.get('token')
         uidb64 = request.data.get('uidb64')
 
