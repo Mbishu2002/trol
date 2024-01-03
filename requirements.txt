@@ -35,4 +35,4 @@ tzdata==2022.2
 update==0.0.1
 urllib3==1.26.12
 utils==1.0.1
-zope.interface==5.4.0
+zope.interface==5.4.0pip freeze 

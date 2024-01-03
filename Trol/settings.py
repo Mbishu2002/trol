@@ -160,11 +160,13 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(days=3),
     'JWT_ALLOW_REFRESH': True
 }
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',  
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-)
 
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+    ]
 
 SITE_ID = 1  
 

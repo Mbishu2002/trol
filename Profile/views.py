@@ -10,7 +10,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.template import loader
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str, force_str, force_text, DjangoUnicodeDecodeError, force_bytes
+from django.utils.encoding import smart_str, force_str, DjangoUnicodeDecodeError, force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.template.loader import render_to_string
 from rest_framework import status
@@ -83,7 +83,7 @@ def login(request):
 @csrf_exempt
 def verify_user(request, uidb64, token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
